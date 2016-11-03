@@ -1,0 +1,41 @@
+/**
+ * 6）interrupt方法
+　　interrupt，顾名思义，即中断的意思。
+	单独调用interrupt方法可以使得处于阻塞状态的线程抛出一个异常，sleep状态等待
+	也就说，它可以用来中断一个正处于阻塞状态的线程；
+	另外，通过interrupt方法和isInterrupted()方法来停止正在运行的线程。
+ * @author Administrator
+ *
+ */
+public class Test3 {
+	public static void main(String[] args) {
+		Test3 test = new Test3();
+		Mythread thread = test.new Mythread();
+		thread.start();
+		try {
+			System.out.println(Thread.currentThread().getName()+"进入睡眠方法 状态阻塞");
+			Thread.currentThread().sleep(3000);
+			System.out.println(Thread.currentThread().getName()+"睡眠完毕 状态运行");
+		} catch (InterruptedException e) {
+		
+		}
+		thread.interrupt();
+	}
+	
+	class Mythread extends Thread{
+		public void run(){
+			try {
+				System.out.println(Thread.currentThread().getName()+"进入睡眠状态 状态阻塞");
+				Thread.currentThread().sleep(4000);
+				System.out.println(Thread.currentThread().getName()+"睡眠完毕 状态运行");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				System.out.println(Thread.currentThread().getName()+"得到中断异常");
+			
+			}
+			System.out.println("run 方法执行完毕");
+		}
+	}
+}
+//从这里可以看出，通过interrupt方法可以中断处于阻塞状态的线程。
+//那么能不能中断处于非阻塞状态的线程呢？
