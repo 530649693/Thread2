@@ -1,0 +1,56 @@
+public class Test4 {
+
+	public static void main(String[] args) {
+		Test4 test = new Test4();
+		Thread thread1 = test.new MyThread();
+		thread1.start();
+		Thread thread2 = test.new MyThread2();
+		thread2.start();
+		try {
+			Thread.currentThread().sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		thread1.interrupt();
+		((MyThread2) thread2).setStop(true);
+
+	}
+
+	class MyThread extends Thread {
+		public void run() {
+			int i = 0;
+			while (!isInterrupted() && i < Integer.MAX_VALUE) {
+				System.out.println(i + " while循环");
+				i++;
+			}
+			System.out.println("MyThread 循环停止");
+		}
+	}
+// 　运行该程序会发现，while循环会一直运行直到变量i的值超出Integer.MAX_VALUE。
+// 所以说直接调用interrupt方法不能中断正在运行中的线程。
+// 如果配合isInterrupted()能够中断正在运行的线程，因为调用interrupt方法相当于将中断标志位置为true，
+// 那么可以通过调用isInterrupted()判断中断标志是否被置位来中断线程的执行。
+//但是一般情况下不建议通过这种方式来中断线程，一般会在MyThread类中增加一个属性 isStop来标志是否结束while循环，
+//然后再在while循环中判断isStop的值
+	
+	class MyThread2 extends Thread{
+	    private volatile boolean isStop = false;
+	    @Override
+	    public void run() {
+	        int i = 0;
+	        while(!isStop){
+	            i++;
+	        }
+	        System.out.println("MyThread2 循环停止");
+	    }
+	  
+	     
+	    public void setStop(boolean stop){
+	        this.isStop = stop;
+	    }
+	}
+
+}
+
+
