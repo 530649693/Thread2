@@ -1,0 +1,46 @@
+/**
+ * 4）yield方法 　　调用yield方法会让当前线程交出CPU权限，让CPU去执行其他的线程。它跟sleep方法类似，
+ * 同样不会释放锁。但是yield不能控制具体的交出CPU的时间，另外，yield方法只能让拥有相同 优先级的线程有获取CPU执行时间的机会。
+ * 　　注意，调用yield方法并不会让线程进入阻塞状态，而是让线程重回就绪状态，它只需要等 待重新获取CPU执行时间，这一点是和sleep方法不一样的。
+ * 　　5）join方法 　　join方法有三个重载版本： join() join(long millis) //参数为毫秒 join(long
+ * millis,int nanoseconds) //第一参数为毫秒，第二个参数为纳秒
+ * 
+ * @author Administrator
+ * 
+ */
+// join方法  实际上调用join方法是调用了Object的wait方法，这个可以通过查看源码得知
+//wait方法会让线程进入阻塞状态，并且会释放线程占有的锁，并交出CPU执行权限。
+//由于wait方法会让线程释放对象锁，所以join方法同样会让线程释放对一个对象持有的锁。
+public class Test2 {
+	public static void main(String[] args) {
+		System.out.println("进入线程" + Thread.currentThread().getName());
+		Test2 test = new Test2();
+		Mythread thread1 = test.new Mythread();
+		thread1.start();
+		try {
+			System.out.println("线程"+Thread.currentThread().getName()+"将进入等待");
+			thread1.join();
+			System.out.println("线程"+Thread.currentThread().getName()+"继续执行");
+			System.out.println("线程"+Thread.currentThread().getName()+"进入睡眠");
+			Thread.currentThread().sleep(2000);
+			System.out.println("线程"+Thread.currentThread().getName()+"睡眠结束");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("线程"+Thread.currentThread().getName()+"执行结束");
+	}
+
+	class Mythread extends Thread {
+		public void run() {
+			System.out.println("进入线程" + Thread.currentThread().getName());
+			try {
+				Thread.currentThread().sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("线程"+Thread.currentThread().getName()+"执行完毕");
+		}
+	}
+}
